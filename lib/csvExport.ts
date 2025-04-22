@@ -2,15 +2,36 @@ import type { Task } from '@prisma/client';
 import { TASK_FIELD_CONFIG } from '@/config/TASK_FIELD_CONFIG';
 
 /**
+ * Formats an ID as a simple sequential number
+ * @param id The original ID
+ * @param index The index in the task array (for sequential ordering)
+ * @returns Formatted ID string (e.g., "1", "2", "3")
+ */
+const formatTaskId = (id: string, index: number): string => {
+  // Use index + 1 to start from 1 instead of 0, and return as a simple number
+  return String(index + 1);
+};
+
+/**
  * Converts a value to a CSV-friendly string.
  * Handles arrays, objects, dates, etc.
  * 
  * @param value The value to convert
  * @param fieldName The name of the field being formatted (for special handling)
+ * @param index The index of the task in the array (for ID formatting)
  * @returns A string representation suitable for CSV
  */
-const formatValueForCsv = (value: any, fieldName?: string): string => {
+const formatValueForCsv = (value: any, fieldName?: string, index?: number): string => {
   if (value === null || value === undefined) return '';
+  
+  // Special handling for ID fields to make them sequential with leading zeros
+  if (fieldName === 'id' && index !== undefined) {
+    return formatTaskId(String(value), index);
+  }
+  // Make task_id the same as id
+  if (fieldName === 'task_id' && index !== undefined) {
+    return formatTaskId(String(value), index);
+  }
   
   if (Array.isArray(value)) {
     // List of fields that need special array handling
@@ -59,12 +80,19 @@ export const tasksToCSV = (tasks: Task[], includeAllFields = false): string => {
     return 'No tasks to export';
   }
   
+  // Sort tasks by creation date to ensure chronological IDs
+  const sortedTasks = [...tasks].sort((a, b) => {
+    const dateA = a.created_at instanceof Date ? a.created_at : new Date(a.created_at);
+    const dateB = b.created_at instanceof Date ? b.created_at : new Date(b.created_at);
+    return dateA.getTime() - dateB.getTime(); // Ascending order by creation date
+  });
+  
   // Determine which fields to include
   const fieldEntries = Object.entries(TASK_FIELD_CONFIG);
   const fieldsToInclude = includeAllFields 
-    ? fieldEntries.map(([fieldName]) => fieldName)
+    ? ['task_id', ...fieldEntries.map(([fieldName]) => fieldName).filter(field => field !== 'id' && field !== 'task_id')]
     : [
-        'id', 'name', 'portfolio', 'project', 'section', 'priority',
+        'task_id', 'name', 'portfolio', 'project', 'section', 'priority',
         'due_date', 'task_goal', 'input_data_context', 'ai_workflow_status',
         'completed_at', 'created_at', 'updated_at'
       ];
@@ -75,10 +103,15 @@ export const tasksToCSV = (tasks: Task[], includeAllFields = false): string => {
   ).join(',');
   
   // Create data rows
-  const rows = tasks.map(task => {
+  const rows = sortedTasks.map((task, index) => {
     const values = fieldsToInclude.map(fieldName => {
+      // Special case for task_id - just use the task index for a simple sequential number
+      if (fieldName === 'task_id') {
+        return String(index);
+      }
+      
       const value = task[fieldName as keyof Task];
-      return formatValueForCsv(value, fieldName);
+      return formatValueForCsv(value, fieldName, index);
     });
     return values.join(',');
   });
