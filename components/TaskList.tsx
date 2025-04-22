@@ -59,12 +59,8 @@ export default function TaskList({ tasks, onTasksChanged }: TaskListProps) {
       for (const taskId of selectedTasks) {
         try {
           console.log(`Deleting task ${taskId}...`);
-          const response = await fetch(`/api/delete-task`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ taskId }),
+          const response = await fetch(`/api/tasks/${taskId}`, {
+            method: 'DELETE',
           });
           
           if (response.ok) {
@@ -174,12 +170,8 @@ export default function TaskList({ tasks, onTasksChanged }: TaskListProps) {
     setIsDeleting(true);
     
     try {
-      const response = await fetch(`/api/delete-task`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ taskId }),
+      const response = await fetch(`/api/tasks/${taskId}`, {
+        method: 'DELETE',
       });
       
       if (response.ok) {

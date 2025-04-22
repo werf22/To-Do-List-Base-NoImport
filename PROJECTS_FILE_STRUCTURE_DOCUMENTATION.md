@@ -5,11 +5,13 @@
 ### `/app` - Next.js App Router Core
 *   Contains all routing, page UI, layouts, and API endpoint logic as defined by the Next.js App Router convention.
     *   `/app/page.tsx` - Main home page with task list, filters, and task creation form
-    *   `/app/tasks/[id]/page.tsx` - Task detail page with full editing capabilities
+    *   `/app/tasks/[id]/page.tsx` - Task detail page with full editing capabilities. Displays task details and allows editing and deletion. Fetches data using the task ID from the URL. Includes form handling, state management, and interaction with the `/api/tasks/[id]` endpoint (GET, PATCH, DELETE). (Delete functionality added/verified 2025-04-22)
     *   `/app/api/tasks/route.ts` - API endpoints for listing and creating tasks
-    *   `/app/api/tasks/[id]/route.ts` - API endpoints for individual task operations (get, update, delete)
+    *   `/app/api/tasks/[id]/route.ts` - API endpoints for individual task operations (get, update, delete). Handles API requests for a specific task ID. Implements:
+        *   `GET`: Retrieve details for a specific task.
+        *   `PATCH`: Update details of a specific task.
+        *   `DELETE`: Delete a specific task. (Verified & Used: 2025-04-22)
     *   `/app/api/tasks/batch/route.ts` - API endpoints for batch operations on multiple tasks
-    *   `/app/api/delete-task/route.ts` - Dedicated endpoint for reliable task deletion
     *   `/app/api/force-delete/route.ts` - Emergency endpoint with direct database access for troubleshooting
 
 ### `/components` - UI Components
@@ -19,7 +21,7 @@
     *   `ImportCSVModal.tsx` - Modal dialog for importing tasks from CSV files
     *   `SimpleTaskList.jsx` - Simple component for displaying tasks in a list format
     *   `TaskForm.tsx` - Component for adding new tasks
-    *   `TaskList.tsx` - Component for displaying tasks in a tabular format
+    *   `TaskList.tsx` - Component for displaying tasks in a tabular format. Displays a list of tasks, potentially with sorting, filtering, and actions like selection and deletion. Interacts with task API endpoints. (Delete functionality updated to use `DELETE /api/tasks/[id]` 2025-04-22)
     *   `/ui/Select.tsx` - Reusable dropdown component with search functionality
     *   `/ui/MultiSelect.tsx` - Reusable multi-select component with checkboxes for selecting multiple options
 
@@ -61,8 +63,6 @@
 /
 ├── app/
 │   ├── api/
-│   │   ├── delete-task/
-│   │   │   └── route.ts
 │   │   ├── force-delete/
 │   │   │   └── route.ts
 │   │   └── tasks/
@@ -116,7 +116,7 @@
 *   [2025-04-22 02:27] Added new components (FilterBar, ImportCSVModal) and utilities (csvExport, csvImport).
 *   [2025-04-22 11:23] Added custom UI components (Select, MultiSelect) for enhanced form fields in the task detail page.
 *   [2025-04-22 14:39] Implemented comprehensive task deletion system with:
-    * New API endpoints (`/api/delete-task/route.ts`, `/api/force-delete/route.ts`)
+    * New API endpoints (`/api/tasks/[id]`)
     * Emergency deletion page (`/pages/nuke-tasks.js`)
     * Enhanced TaskList component with integrated delete buttons
 

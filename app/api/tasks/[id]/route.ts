@@ -254,47 +254,32 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
  * DELETE handler to delete a specific task by ID
  */
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
-  console.log(`DELETE /api/tasks/${params.id} called`);
-  
-  try {
-    // Validate task ID
-    const taskId = params.id;
-    if (!taskId) {
-      return NextResponse.json({ error: 'Task ID is required' }, { status: 400 });
-    }
+  const taskId = params.id;
+  console.log(`[API DELETE /api/tasks/${taskId}] Received request.`); // <-- Log: Request received
 
-    // Check if task exists before doing any processing
-    const existingTask = await prisma.task.findUnique({
+  if (!taskId) {
+    console.log(`[API DELETE /api/tasks/${taskId}] Error: Task ID is missing.`);
+    return NextResponse.json({ error: 'Task ID is required' }, { status: 400 });
+  }
+
+  try {
+    console.log(`[API DELETE /api/tasks/${taskId}] Attempting to delete task from database...`); // <-- Log: Prisma call attempt
+    await prisma.task.delete({
       where: { id: taskId },
     });
-
-    if (!existingTask) {
-      return NextResponse.json(
-        { error: "Task not found" },
-        { status: 404 }
-      );
-    }
-
-    // Delete the task
-    await prisma.task.delete({
-      where: {
-        id: taskId,
-      },
-    });
-
-    // Return success
+    console.log(`[API DELETE /api/tasks/${taskId}] Task successfully deleted from database.`); // <-- Log: Prisma success
     return NextResponse.json({ success: true, message: 'Task deleted successfully' });
   } catch (error: any) {
-    console.error(`API Error: Failed to delete task ${params.id}:`, error);
-    
-    // Handle specific error types
-    if (error.code === 'P2025') {
+    console.error(`[API DELETE /api/tasks/${taskId}] Error during database deletion:`, error); // <-- Log: Prisma error
+
+    // Handle specific Prisma errors if needed
+    if (error.code === 'P2025') { // Record to delete does not exist
+      console.log(`[API DELETE /api/tasks/${taskId}] Error: Task not found.`);
       return NextResponse.json({ error: 'Task not found' }, { status: 404 });
     }
-    
-    return NextResponse.json(
-      { error: 'Internal Server Error: Could not delete task.' },
-      { status: 500 }
-    );
+
+    // Generic server error
+    console.log(`[API DELETE /api/tasks/${taskId}] Returning generic 500 error.`);
+    return NextResponse.json({ error: 'Failed to delete task', details: error.message || 'Unknown error' }, { status: 500 });
   }
 }

@@ -73,6 +73,8 @@ This document tracks major completed features and milestones during the developm
     *   Created `components/ImportCSVModal.tsx` for CSV file upload and import management.
     *   Added comprehensive error handling and validation for CSV imports.
     *   Implemented selective field export options.
+*   **[DONE]** CSV Import API Endpoint:
+    *   Implemented `POST /api/csv/import` API endpoint using `/lib/csvImport.ts` utility.
 *   **[DONE]** UI Improvements:
     *   Made all components fully responsive for mobile and desktop use.
     *   Added loading states and error messages for all async operations.
@@ -88,9 +90,25 @@ This document tracks major completed features and milestones during the developm
     *   Implemented `/api/force-delete` endpoint with fallback to raw SQL queries for handling edge cases.
     *   Created emergency task deletion page (`/nuke-tasks`) with direct database access for troubleshooting.
     *   Added comprehensive error handling and user feedback for deletion operations.
+*   **[DONE]** Verified DELETE API Endpoint and Removed Redundant Route (2025-04-22):
+    *   Verified existing `DELETE /api/tasks/[id]` endpoint implementation in `/app/api/tasks/[id]/route.ts` is correct and follows REST principles.
+    *   Removed redundant `/app/api/delete-task` route to consolidate DELETE logic.
+
+## Phase 1.1: Task Deletion Feature Implementation and Fixes - Completed [2025-04-22]
+
+*   **[DONE]** API Endpoint for CSV Import: Successfully implemented and tested the `POST /api/csv/import` endpoint (`app/api/csv/import/route.ts`) using `/lib/csvImport.ts` utilities. (Date: 2025-04-22)
+*   **[DONE]** Task Deletion API Verification: Verified the `DELETE /api/tasks/[id]` endpoint in `app/api/tasks/[id]/route.ts` is correctly implemented. (Date: 2025-04-22)
+*   **[DONE]** Redundant API Removal: Removed the old `/api/delete-task` route and confirmed its deletion. (Date: 2025-04-22)
+*   **[DONE]** Task Deletion (Detail Page): Implemented the delete button and logic (`handleDelete`) on the task detail page (`app/tasks/[id]/page.tsx`), calling the correct `DELETE /api/tasks/[id]` endpoint. Debugged initial issues with extensive logging. (Date: 2025-04-22)
+*   **[DONE]** Task Deletion (List Page): Fixed the delete functionality (single and batch) on the main task list (`components/TaskList.tsx`) to use the correct `DELETE /api/tasks/[id]` endpoint instead of the removed `/api/delete-task`. (Date: 2025-04-22)
+
+## Phase 2: UI Enhancements & Core Features
+{{ ... }}
 
 ---
 
 *(Future entries will be added below as phases/features are completed)*
 
+_Last updated: 2025-04-22 (Verified DELETE API Endpoint and Removed Redundant Route)_
 _Last updated: 2025-04-22 (Task Deletion System)_
+_Last updated: 2025-04-22 (Implemented CSV Import API)_

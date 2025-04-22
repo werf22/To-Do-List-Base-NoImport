@@ -27,6 +27,7 @@ export default function TaskDetailPage({ params }: TaskDetailPageProps) {
   const [editedTask, setEditedTask] = useState<Partial<Task>>({});
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Fetch the task data when the component mounts
   useEffect(() => {
@@ -215,6 +216,54 @@ export default function TaskDetailPage({ params }: TaskDetailPageProps) {
       setSaveError(`Failed to save changes. ${e.message || 'Please try again later.'}`);
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  // Delete the task
+  const handleDelete = async () => {
+    console.log('[handleDelete] Clicked'); // <-- Log: Click detected
+    if (!task) {
+      console.log('[handleDelete] No task loaded, exiting.');
+      return;
+    }
+
+    console.log(`[handleDelete] Prompting user for task: ${task.name} (ID: ${id})`);
+    if (window.confirm(`Are you sure you want to delete task "${task.name}"? This action cannot be undone.`)) {
+      console.log('[handleDelete] User confirmed deletion.'); // <-- Log: Confirmation received
+      setIsDeleting(true);
+      setSaveError(null); // Clear previous errors
+      try {
+        console.log(`[handleDelete] Sending DELETE request to /api/tasks/${id}`); // <-- Log: Fetch initiated
+        const response = await fetch(`/api/tasks/${id}`, {
+          method: 'DELETE',
+        });
+
+        console.log(`[handleDelete] Received response status: ${response.status}`); // <-- Log: Response status
+
+        if (!response.ok) {
+          let errorMsg = `HTTP error! status: ${response.status} ${response.statusText}`;
+          try {
+            const errorData = await response.json();
+            console.log('[handleDelete] Error response body:', errorData); // <-- Log: Error body
+            errorMsg = errorData.error || errorMsg;
+          } catch (jsonError) {
+            console.warn("[handleDelete] Could not parse error response as JSON:", jsonError);
+          }
+          throw new Error(errorMsg);
+        }
+
+        console.log(`[handleDelete] Task ${id} deleted successfully via API.`);
+        router.push('/'); // Redirect to home page after successful deletion
+
+      } catch (e: any) {
+        console.error(`[handleDelete] Error during deletion API call:`, e);
+        setSaveError(`Failed to delete task. ${e.message || 'Please try again later.'}`); // Reuse saveError state
+      } finally {
+        console.log('[handleDelete] Resetting isDeleting state.');
+        setIsDeleting(false);
+      }
+    } else {
+      console.log('[handleDelete] User cancelled deletion.'); // <-- Log: Confirmation cancelled
     }
   };
 
@@ -518,6 +567,13 @@ export default function TaskDetailPage({ params }: TaskDetailPageProps) {
                 className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
               >
                 Edit Task
+              </button>
+              <button
+                onClick={handleDelete}
+                disabled={isDeleting}
+                className={`px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition ${isDeleting ? 'opacity-50 cursor-not-allowed' : ''}`}
+              >
+                {isDeleting ? 'Deleting...' : 'Delete Task'}
               </button>
               <Link 
                 href="/"

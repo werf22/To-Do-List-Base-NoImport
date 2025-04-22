@@ -16,6 +16,10 @@ This project aims to create a highly efficient, minimalist, and reliable alterna
 *   Advanced filtering and sorting by any task field.
 *   CSV data export.
 *   Responsive design for desktop (Macbook) and mobile (iPhone).
+*   **Task Viewing & Editing:** View detailed task information and edit fields directly on the task page (`/tasks/[id]`).
+*   **Task Deletion:** Delete tasks individually from the task detail page or the main list view, with confirmation prompts. (Implemented 2025-04-22)
+*   **CSV Import/Export:**
+    *   Import tasks from a CSV file via an API endpoint (`/api/csv/import`).
 
 ## 2. Tech Stack
 

@@ -48,7 +48,6 @@ Create a custom AI-powered Task Management web application based on the specific
 *   [ ] API: Implement single task endpoints in `app/api/tasks/[id]/route.ts`:
     *   [ ] `GET` handler to fetch a specific task by ID.
     *   [ ] `PATCH` handler to update a specific task.
-    *   [ ] `DELETE` handler to remove a task.
 *   [x] Frontend: Create detailed task view page `app/tasks/[id]/page.tsx`.
 *   [x] Frontend: Implement editing functionality for all task fields.
 *   [x] Frontend: Create custom Select and MultiSelect components for dropdown fields.
@@ -114,3 +113,34 @@ Create a custom AI-powered Task Management web application based on the specific
 *   Mobile app version.
 *   Integration with third-party productivity tools.
 *   Time tracking for tasks.
+
+### CSV Functionality (`/lib/csvUtils.ts`, `/app/api/csv`)
+
+*   [X] `POST /api/csv/import` - Implement CSV import functionality.
+*   [ ] `GET /api/csv/export` - Implement CSV export functionality.
+
+### AI Integration (Placeholder - Phase 2/3)
+
+*   [ ] Define AI agent interaction points (e.g., chat interface, background processing).
+*   [ ] Select/Integrate AI model/service.
+*   [ ] Implement AI logic for field population/task assistance.
+
+### Frontend (`/app`, `/components` - Placeholder - Phase 1.5/2)
+
+*   [ ] Basic Task List Display Component.
+*   [ ] Basic Task Detail View Component.
+*   [ ] Basic Task Creation Form Component (Based on `csv_input_form_documentation.md`).
+*   [ ] Connect Frontend components to API endpoints.
+
+### Testing
+
+*   [ ] Add unit tests for API endpoints (CRUD).
+*   [ ] Add unit tests for CSV Utils.
+*   [ ] Add integration tests (if feasible).
+
+### Documentation & Refinement
+
+*   [ ] Add detailed JSDoc comments to all functions/modules.
+*   [ ] Refine Prisma schema based on testing/development (`schema.prisma`).
+*   [ ] Refine Task Field Configuration (`TASK_FIELD_CONFIG.ts`).
+*   [X] Update project documentation (`README.md`, `PLANNING.md`, `TASK.md`, `DONE.md`, `PROJECTS_FILE_STRUCTURE_DOCUMENTATION.md`) - *Ongoing*
