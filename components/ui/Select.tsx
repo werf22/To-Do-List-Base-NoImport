@@ -86,11 +86,18 @@ export const Select: React.FC<SelectProps> = ({
       {isOpen && (
         <div 
           ref={dropdownRef}
-          className={`absolute z-20 w-full border border-gray-300 rounded-md bg-white shadow-lg max-h-60 overflow-auto ${
+          className={`fixed z-50 w-full max-w-[calc(100%-2rem)] border border-gray-300 rounded-md bg-white shadow-lg max-h-60 overflow-auto ${
             position === 'top' 
               ? 'bottom-full mb-1' 
               : 'top-full mt-1'
           }`}
+          style={{
+            width: containerRef.current ? `${containerRef.current.offsetWidth}px` : '100%',
+            left: containerRef.current ? `${containerRef.current.getBoundingClientRect().left}px` : '0',
+            ...(position === 'top' 
+              ? { bottom: `${window.innerHeight - (containerRef.current?.getBoundingClientRect().top || 0)}px` } 
+              : { top: `${(containerRef.current?.getBoundingClientRect().bottom || 0)}px` })
+          }}
         >
           {/* Search input */}
           <div className="sticky top-0 bg-white border-b border-gray-300 p-2">
